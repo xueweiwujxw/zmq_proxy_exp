@@ -11,15 +11,15 @@
     pip install git-python
     ```
 
-    > [!TIP]
-    > Learn more about waf from the official documentation:
-    > [`The waf Book`](https://waf.io/book/)
-
   - Install libzmq
 
     ```bash
     sudo apt install libzmq3-dev
     ```
+
+> [!TIP]
+> Learn more about waf from the official documentation:
+> [`The waf Book`](https://waf.io/book/)
 
 - Build
 
