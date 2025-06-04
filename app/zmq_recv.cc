@@ -89,12 +89,12 @@ int main(int argc, char const *argv[])
 	std::unique_lock<std::mutex> lock(sig_mutex);
 	sig_cv.wait(lock);
 
-	sub_socket.close();
-	ctx.close();
-
 	logf_info("Shutting down...\n");
 
 	sub_thread.join();
+
+	sub_socket.close();
+	ctx.close();
 
 	logf_info("Clean exit\n");
 	lock.unlock();

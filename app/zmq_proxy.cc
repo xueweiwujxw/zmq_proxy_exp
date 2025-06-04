@@ -13,6 +13,7 @@
 #include <thread>
 #include <condition_variable>
 #include <mutex>
+#include <sys/stat.h>
 
 #include <zmq.hpp>
 
@@ -25,6 +26,38 @@ std::condition_variable sig_cv;
 void sigint_cb_handler(int signum) { sig_cv.notify_all(); }
 
 void sigterm_cb_handler(int signum) { sig_cv.notify_all(); }
+
+bool set_ipc_permissions(const char *endpoint)
+{
+	const char *prefix = "ipc://";
+	size_t prefix_len = strlen(prefix);
+
+	if (strncmp(endpoint, prefix, prefix_len) != 0) {
+		logf_err("Invalid IPC endpoint: %s\n", endpoint);
+		return false;
+	}
+
+	const char *filepath = endpoint + prefix_len;
+
+#ifndef _WIN32
+	struct stat st;
+	if (stat(filepath, &st) != 0) {
+		logf_err("IPC file not found: %s (%s)\n", filepath,
+		         strerror(errno));
+		return false;
+	}
+
+	if (chmod(filepath, S_IRWXU | S_IRWXG | S_IRWXO) != 0) {
+		logf_err("Failed to set permissions for %s: %s\n", filepath,
+		         strerror(errno));
+		return false;
+	}
+
+	logf_info("Set global permissions for %s\n", filepath);
+#endif
+
+	return true;
+}
 
 int main(int argc, char const *argv[])
 {
@@ -64,6 +97,12 @@ int main(int argc, char const *argv[])
 		logf_err("%s\n", e.what());
 		return 1;
 	}
+
+	// Optional
+	if (!set_ipc_permissions(FIXED_ZMQ_XSUB_PATH))
+		return 1;
+	if (!set_ipc_permissions(FIXED_ZMQ_XPUB_PATH))
+		return 1;
 
 	std::thread proxy_thread([&]() {
 		try {

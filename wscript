@@ -103,7 +103,8 @@ def configure(ctx):
     ctx.env.debug = ctx.options.debug
     ctx.env.stamp = ctx.options.stamp
     ctx.env.mode = ctx.options.mode
-    cxxflags = ['-Wall', '-Wextra', '-std=c++17', '-Wno-unused-parameter']
+    cxxflags = ['-Wall', '-Wextra', '-std=c++2a',
+                '-Wno-unused-parameter', '-Wpedantic']
     if ctx.env.debug:
         cxxflags.append('-g')
     else:

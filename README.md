@@ -78,3 +78,8 @@ $ dl --tree build
   - Enter a negative number or 0 to exit.
 
 Messages will appear in the `zmq_recv` terminal.
+
+### Check
+
+- Download valgrind from [`Valgrind Download`](https://valgrind.org/downloads/), compile and install valgrind.
+- Run `mem_check.sh`. Exp: `./mem_check.sh ./build/dist/app/zmq_proxy`. And then you can find `valgrind.log` in current folder.
